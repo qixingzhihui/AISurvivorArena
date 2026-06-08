@@ -1,0 +1,23 @@
+# 编译生成的文件
+Binaries/
+Intermediate/
+DerivedDataCache/
+Saved/
+
+# IDE 配置文件
+.vs/
+.vscode/
+
+# 用户本地设置
+*.opensdf
+*.sdf
+*.sln.ide
+*.VC.db
+
+# 打包输出
+Build/
+
+# 其他
+*.tmp
+*.log
+*.user
