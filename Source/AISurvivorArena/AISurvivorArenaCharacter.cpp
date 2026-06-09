@@ -11,17 +11,17 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "AISurvivorArena.h"
-#include "HealthComponent.h"
+#include "Combat/HealthComponent.h"
 #include "DrawDebugHelpers.h"
 
 void AAISurvivorArenaCharacter::BeginPlay()
 {
-    Super::BeginPlay();
+	Super::BeginPlay();
 
-    if (HealthComponent)
-    {
-        HealthComponent->OnDeath.AddDynamic(this, &AAISurvivorArenaCharacter::HandleDeath);
-    }
+	if (HealthComponent)
+	{
+		HealthComponent->OnDeath.AddDynamic(this, &AAISurvivorArenaCharacter::HandleDeath);
+	}
 }
 
 AAISurvivorArenaCharacter::AAISurvivorArenaCharacter()
@@ -40,8 +40,8 @@ AAISurvivorArenaCharacter::AAISurvivorArenaCharacter()
 
 	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
 	// instead of recompiling to adjust them
-	GetCharacterMovement()->JumpZVelocity = 600.f;
-	GetCharacterMovement()->AirControl = 1.0f;
+	GetCharacterMovement()->JumpZVelocity = 570.f;
+	GetCharacterMovement()->AirControl = 3.0f;
 	GetCharacterMovement()->MaxWalkSpeed = 700.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
@@ -199,5 +199,22 @@ void AAISurvivorArenaCharacter::DoJumpEnd()
 
 void AAISurvivorArenaCharacter::HandleDeath()
 {
-	UE_LOG(LogTemp, Error, TEXT("Player died"));
+	UE_LOG(LogTemp, Error, TEXT("Player died - Game Over"));
+
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		PC->DisableInput(PC);
+		PC->SetPause(true);
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("GAME OVER"));
+		}
+	}
+
+	SetActorHiddenInGame(true);
+	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+	{
+		MoveComp->DisableMovement();
+		MoveComp->StopMovementImmediately();
+	}
 }

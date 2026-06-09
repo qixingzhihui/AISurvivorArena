@@ -108,6 +108,9 @@ public:
 	UFUNCTION()
 	void HandleDeath();
 
+	UPROPERTY(BlueprintReadOnly, Category = "Game")
+	bool bIsDead = false;
+
 public:
 
 	/** Returns CameraBoom subobject **/

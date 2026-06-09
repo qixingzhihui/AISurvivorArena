@@ -53,3 +53,8 @@ bool UHealthComponent::IsDead() const
 {
     return CurrentHealth <= 0.0f;
 }
+
+void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
