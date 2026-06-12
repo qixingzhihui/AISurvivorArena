@@ -7,12 +7,16 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
+#include "GameFramework/PlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "AISurvivorArena.h"
 #include "Combat/HealthComponent.h"
+#include "Blueprint/UserWidget.h"
+#include "UI/AIChatWidget.h"
 #include "DrawDebugHelpers.h"
+#include "UI/AIChatWidget.h"
 
 void AAISurvivorArenaCharacter::BeginPlay()
 {
@@ -22,6 +26,7 @@ void AAISurvivorArenaCharacter::BeginPlay()
 	{
 		HealthComponent->OnDeath.AddDynamic(this, &AAISurvivorArenaCharacter::HandleDeath);
 	}
+	CreateAIChatWidgetIfNeeded();
 }
 
 AAISurvivorArenaCharacter::AAISurvivorArenaCharacter()
@@ -82,6 +87,16 @@ void AAISurvivorArenaCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AAISurvivorArenaCharacter::Look);
 		//Attack
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AAISurvivorArenaCharacter::Attack);
+
+		EnhancedInputComponent->BindAction(ToggleAIChatAction, ETriggerEvent::Started, this, &AAISurvivorArenaCharacter::ToggleAIChat);
+
+		PlayerInputComponent->BindAction(
+			TEXT("ToggleAIChat"),
+			IE_Pressed,
+			this,
+			&AAISurvivorArenaCharacter::ToggleAIChat
+		);
+
 	}
 	else
 	{
@@ -216,5 +231,105 @@ void AAISurvivorArenaCharacter::HandleDeath()
 	{
 		MoveComp->DisableMovement();
 		MoveComp->StopMovementImmediately();
+	}
+}
+
+//void AAISurvivorArenaCharacter::ToggleAIChat()
+//{
+//	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+//
+//	if (!PlayerController)
+//	{
+//		return;
+//	}
+//
+//	if (bIsChatOpen)
+//	{
+//		if (AIChatWidget)
+//		{
+//			AIChatWidget->RemoveFromParent();
+//			AIChatWidget = nullptr;
+//		}
+//
+//		FInputModeGameOnly InputMode;
+//		PlayerController->SetInputMode(InputMode);
+//		PlayerController->bShowMouseCursor = false;
+//
+//		bIsChatOpen = false;
+//
+//		UE_LOG(LogTemp, Warning, TEXT("AI chat closed."));
+//	}
+//	else
+//	{
+//		if (!AIChatWidgetClass)
+//		{
+//			UE_LOG(LogTemp, Error, TEXT("AIChatWidgetClass is not set in player blueprint."));
+//			return;
+//		}
+//
+//		AIChatWidget = CreateWidget<UUserWidget>(PlayerController, AIChatWidgetClass);
+//
+//		if (!AIChatWidget)
+//		{
+//			UE_LOG(LogTemp, Error, TEXT("Failed to create AIChatWidget."));
+//			return;
+//		}
+//
+//		AIChatWidget->AddToViewport();
+//
+//		FInputModeGameAndUI InputMode;
+//		InputMode.SetWidgetToFocus(AIChatWidget->TakeWidget());
+//		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+//
+//		PlayerController->SetInputMode(InputMode);
+//		PlayerController->bShowMouseCursor = true;
+//
+//		bIsChatOpen = true;
+//
+//		UE_LOG(LogTemp, Warning, TEXT("AI chat opened."));
+//	}
+//}
+
+void AAISurvivorArenaCharacter::CreateAIChatWidgetIfNeeded()
+{
+	if (AIChatWidget)
+	{
+		return;
+	}
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	if (!AIChatWidgetClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AIChatWidgetClass is not set in player blueprint."));
+		return;
+	}
+
+	AIChatWidget = CreateWidget<UAIChatWidget>(PlayerController, AIChatWidgetClass);
+
+	if (!AIChatWidget)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to create AIChatWidget."));
+		return;
+	}
+
+	AIChatWidget->AddToViewport(10);
+	AIChatWidget->SetExpanded(false);
+
+	UE_LOG(LogTemp, Warning, TEXT("Echo mini window created."));
+}
+
+void AAISurvivorArenaCharacter::ToggleAIChat()
+{
+	CreateAIChatWidgetIfNeeded();
+
+	if (AIChatWidget)
+	{
+		AIChatWidget->ToggleExpanded();
 	}
 }

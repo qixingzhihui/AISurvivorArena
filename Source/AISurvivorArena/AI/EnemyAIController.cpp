@@ -12,23 +12,19 @@ void AEnemyAIController::BeginPlay()
 
     if (!ControlledPawn)
     {
-        UE_LOG(LogTemp, Error, TEXT("EnemyAIController has no pawn"));
         return;
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("EnemyAIController controls: %s"), *ControlledPawn->GetName());
 
     AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(ControlledPawn);
 
     if (!EnemyCharacter)
     {
-        UE_LOG(LogTemp, Error, TEXT("Controlled pawn is not EnemyCharacter"));
         return;
     }
 
     if (!EnemyCharacter->PawnSensingComponent)
     {
-        UE_LOG(LogTemp, Error, TEXT("EnemyCharacter has no PawnSensingComponent"));
         return;
     }
 
@@ -150,7 +146,6 @@ void AEnemyAIController::TryAttack()
 
     if (!bHit)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Enemy attack missed"));
         return;
     }
 
@@ -165,7 +160,6 @@ void AEnemyAIController::TryAttack()
 
     if (!TargetHealth)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Hit target has no HealthComponent"));
         return;
     }
 
@@ -175,12 +169,4 @@ void AEnemyAIController::TryAttack()
     }
 
     TargetHealth->ApplyDamage(EnemyCharacter->AttackDamage);
-
-    UE_LOG(
-        LogTemp,
-        Warning,
-        TEXT("hit %s Enemy attacked target for %.1f damage"),
-        *HitActor->GetName(),
-        EnemyCharacter->AttackDamage
-    );
 }

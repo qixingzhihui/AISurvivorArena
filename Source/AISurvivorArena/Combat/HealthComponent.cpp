@@ -30,8 +30,6 @@ void UHealthComponent::ApplyDamage(float DamageAmount)
 
     CurrentHealth -= DamageAmount;
 
-    UE_LOG(LogTemp, Warning, TEXT("Health: %.1f / %.1f"), CurrentHealth, MaxHealth);
-
     if (CurrentHealth <= 0.0f)
     {
         CurrentHealth = 0.0f;

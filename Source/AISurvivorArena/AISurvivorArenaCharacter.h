@@ -11,6 +11,8 @@ class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
 class UHealthComponent;
+class UAIChatWidget;
+
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -36,7 +38,6 @@ class AAISurvivorArenaCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UHealthComponent* HealthComponent;
 
-	
 protected:
 
 	/** Jump Input Action */
@@ -65,16 +66,21 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* MouseLookAction;
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* ToggleAIChatAction;
+
 
 public:
 	virtual void  BeginPlay() override;
 	/** Constructor */
 	AAISurvivorArenaCharacter();	
+	void ToggleAIChat();
 
 protected:
 
 	/** Initialize input action bindings */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 
 protected:
 
@@ -110,6 +116,17 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Game")
 	bool bIsDead = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UAIChatWidget> AIChatWidgetClass;
+
+	UPROPERTY()
+	UAIChatWidget* AIChatWidget = nullptr;
+
+	bool bIsChatOpen = false;
+
+	void CreateAIChatWidgetIfNeeded();
+
 
 public:
 

@@ -14,12 +14,21 @@ public class AISurvivorArena : ModuleRules
 			"Engine",
 			"InputCore",
 			"EnhancedInput",
+
 			"AIModule",
-			"StateTreeModule",
+            "NavigationSystem",
+
+            "StateTreeModule",
 			"GameplayStateTreeModule",
+
 			"UMG",
-			"Slate"
-		});
+			"Slate",
+            "SlateCore",
+
+            "HTTP",
+			"Json",
+			"JsonUtilities"
+        });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 

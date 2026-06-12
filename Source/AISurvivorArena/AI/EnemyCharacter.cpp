@@ -33,6 +33,5 @@ void AEnemyCharacter::BeginPlay()
 
 void AEnemyCharacter::HandleDeath()
 {
-    UE_LOG(LogTemp, Error, TEXT("Enemy died"));
     Destroy();
 }
