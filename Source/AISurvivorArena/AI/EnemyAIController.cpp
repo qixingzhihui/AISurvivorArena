@@ -78,19 +78,22 @@ void AEnemyAIController::TryAttack()
         CurrentTarget->GetActorLocation()
     );
 
-    if (!bIsChasing || Distance > EnemyCharacter->LoseAttackRange)
+    if (bIsChasing&&Distance > EnemyCharacter->AttackRange*3/4)
+    {
+        MoveToActor(CurrentTarget, 50.0f);
+        return;
+    }
+    if (!bIsChasing && Distance > EnemyCharacter->AttackRange)
     {
         MoveToActor(CurrentTarget, 50.0f);
         bIsChasing = true;
         return;
     }
-
-    if (bIsChasing && Distance <= EnemyCharacter->AttackRange)
+    if (bIsChasing && Distance <= EnemyCharacter->AttackRange*3/4)
     {
         StopMovement();
         bIsChasing = false;
     }
-
     float CurrentTime = GetWorld()->GetTimeSeconds();
 
     if (CurrentTime - LastAttackTime < EnemyCharacter->AttackCooldown)
